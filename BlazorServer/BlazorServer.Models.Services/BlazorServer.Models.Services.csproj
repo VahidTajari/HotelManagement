@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorServer.DataAccess\BlazorServer.DataAccess.csproj" />
+    <ProjectReference Include="..\BlazorServer.Models.Mappings\BlazorServer.Models.Mappings.csproj" />
+    <ProjectReference Include="..\BlazorServer.Models\BlazorServer.Models.csproj" />
+  </ItemGroup>
+
+</Project>
