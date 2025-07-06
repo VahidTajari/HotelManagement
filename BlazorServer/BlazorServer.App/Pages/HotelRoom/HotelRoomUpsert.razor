@@ -1,0 +1,63 @@
+﻿@page "/hotel-room/create"
+
+@inject IHotelRoomService HotelRoomService
+@inject NavigationManager NavigationManager
+
+<h3>Hotel Room Upsert</h3>
+<div class="row mt-2 mb-5">
+    <h3 class="card-title text-info mb-3 ml-3">@Title Hotel Room</h3>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="HotelRoomDto" OnValidSubmit="HandelHotelRoomUpsert">
+                    <DataAnnotationsValidator />
+                    @*<ValidationSummary />*@<div class="form-group">
+                        <label>Name</label>
+                        <InputText class="form-control" @bind-Value="HotelRoomDto.Name" />
+                        <ValidationMessage For="() =>HotelRoomDto.Name"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label>Occupancy</label>
+                        <InputNumber class="form-control" @bind-Value="HotelRoomDto.Occupancy" />
+                        <ValidationMessage For="() =>HotelRoomDto.Occupancy"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate</label>
+                        <InputNumber class="form-control" @bind-Value="HotelRoomDto.RegularRate" />
+                        <ValidationMessage For="() =>HotelRoomDto.RegularRate"></ValidationMessage>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Sq ft.</label>
+                        <InputText class="form-control" @bind-Value="HotelRoomDto.SqFt" />
+                    </div>
+                    <div class="form-group">
+                        <label>Details</label>
+                        <InputTextArea class="form-control" @bind-Value="HotelRoomDto.Details" />
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">@Title Room</button>
+                        <NavLink href="hotel-room" class="btn btn-secondary">Back To Index</NavLink>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private readonly HotelRoomDto HotelRoomDto = new HotelRoomDto();
+    private readonly string Title = "Create";
+
+    private  async Task HandelHotelRoomUpsert()
+    {
+        var roomDetailByName = await HotelRoomService.IsRoomUniqueAsync(HotelRoomDto.Name);
+        if (roomDetailByName != null)
+        {
+            return;
+        }
+        await HotelRoomService.CreateHotelRoomAsync(HotelRoomDto);
+        NavigationManager.NavigateTo("hotel-room");
+    }
+}

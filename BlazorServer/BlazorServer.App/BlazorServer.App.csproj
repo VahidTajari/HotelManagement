@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorServer.DataAccess\BlazorServer.DataAccess.csproj" />
     <ProjectReference Include="..\BlazorServer.Models.Services\BlazorServer.Models.Services.csproj" />
+    <ProjectReference Include="..\BlazorServer.Models\BlazorServer.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

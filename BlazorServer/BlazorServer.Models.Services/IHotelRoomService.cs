@@ -5,15 +5,14 @@ namespace BlazorServer.Models.Services;
 
 public interface IHotelRoomService
 {
-    Task<HotelRoomDto> CreateHotelRoomAsync(HotelRoomDto hotelRoomDto);
+    public Task<HotelRoomDto> CreateHotelRoomAsync(HotelRoomDto hotelRoomDto);
+    public Task<int> DeleteHotelRoomAsync(int roomId);
 
-    Task<int> DeleteHotelRoomAsync(int roomId);
+    public IAsyncEnumerable<HotelRoomDto> GetAllHotelRoomsAsync();
 
-    IAsyncEnumerable<HotelRoomDto> GetAllHotelRoomsAsync();
+    public Task<HotelRoomDto> GetHotelRoomAsync(int roomId);
 
-    Task<HotelRoomDto> GetHotelRoomAsync(int roomId);
+    public Task<HotelRoomDto> IsRoomUniqueAsync(string name);
 
-    Task<HotelRoomDto> IsRoomUniqueAsync(string name);
-
-    Task<HotelRoomDto> UpdateHotelRoomAsync(int roomId, HotelRoomDto hotelRoomDto);
+    public Task<HotelRoomDto> UpdateHotelRoomAsync(int roomId, HotelRoomDto hotelRoomDto);
 }
