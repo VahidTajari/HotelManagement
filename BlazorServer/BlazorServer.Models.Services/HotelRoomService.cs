@@ -6,6 +6,7 @@ using AutoMapper.QueryableExtensions;
 using BlazorServer.DataAccess;
 using BlazorServer.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace BlazorServer.Models.Services;
 public class HotelRoomService : IHotelRoomService
@@ -56,14 +57,6 @@ public class HotelRoomService : IHotelRoomService
                         .ProjectTo<HotelRoomDto>(_mapperConfiguration)
                         .FirstOrDefaultAsync(x => x.Id == roomId);
     }
-
-    public Task<HotelRoomDto> IsRoomUniqueAsync(string name)
-    {
-        return _dbContext.HotelRooms
-                        .ProjectTo<HotelRoomDto>(_mapperConfiguration)
-                        .FirstOrDefaultAsync(x => x.Name == name);
-    }
-
     public async Task<HotelRoomDto> UpdateHotelRoomAsync(int roomId, HotelRoomDto hotelRoomDto)
     {
         if (roomId != hotelRoomDto?.Id)
@@ -78,5 +71,29 @@ public class HotelRoomService : IHotelRoomService
         var updatedRoom = _dbContext.HotelRooms.Update(room);
         await _dbContext.SaveChangesAsync();
         return _mapper.Map<HotelRoomDto>(updatedRoom.Entity);
+    }
+
+    public Task<HotelRoomDto> IsRoomUniqueAsync(string name)
+    {
+        return _dbContext.HotelRooms
+            .ProjectTo<HotelRoomDto>(_mapperConfiguration)
+            .FirstOrDefaultAsync(x => x.Name == name);
+    }
+
+    public async Task<bool> IsRoomUniqueAsync(string name, int roomId)
+    {
+        if (roomId == 0)
+        {
+            // Create Mode
+            var r = await _dbContext.HotelRooms.FirstOrDefaultAsync(x => x.Name == name);
+            return r is null;
+        }
+        else
+        {
+            // Edit Mode
+
+            var r = await _dbContext.HotelRooms.FirstOrDefaultAsync(x => x.Id == roomId && x.Name == name);
+            return r is null;
+        }
     }
 }

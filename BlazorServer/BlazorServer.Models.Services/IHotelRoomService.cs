@@ -12,7 +12,7 @@ public interface IHotelRoomService
 
     public Task<HotelRoomDto> GetHotelRoomAsync(int roomId);
 
-    public Task<HotelRoomDto> IsRoomUniqueAsync(string name);
-
     public Task<HotelRoomDto> UpdateHotelRoomAsync(int roomId, HotelRoomDto hotelRoomDto);
+    public Task<HotelRoomDto> IsRoomUniqueAsync(string name);
+    public Task<bool> IsRoomUniqueAsync(string name, int roomId);
 }

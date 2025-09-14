@@ -1,7 +1,11 @@
 ﻿@page "/hotel-room/create"
+@page "/hotel-room/edit/{Id:int}"
+@using BlazorServer.App.Utils
+
 
 @inject IHotelRoomService HotelRoomService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 <h3>Hotel Room Upsert</h3>
 <div class="row mt-2 mb-5">
@@ -14,17 +18,17 @@
                     @*<ValidationSummary />*@<div class="form-group">
                         <label>Name</label>
                         <InputText class="form-control" @bind-Value="HotelRoomDto.Name" />
-                        <ValidationMessage For="() =>HotelRoomDto.Name"></ValidationMessage>
+                        <ValidationMessage For="() => HotelRoomDto.Name"></ValidationMessage>
                     </div>
                     <div class="form-group">
                         <label>Occupancy</label>
                         <InputNumber class="form-control" @bind-Value="HotelRoomDto.Occupancy" />
-                        <ValidationMessage For="() =>HotelRoomDto.Occupancy"></ValidationMessage>
+                        <ValidationMessage For="() => HotelRoomDto.Occupancy"></ValidationMessage>
                     </div>
                     <div class="form-group">
                         <label>Rate</label>
                         <InputNumber class="form-control" @bind-Value="HotelRoomDto.RegularRate" />
-                        <ValidationMessage For="() =>HotelRoomDto.RegularRate"></ValidationMessage>
+                        <ValidationMessage For="() => HotelRoomDto.RegularRate"></ValidationMessage>
 
                     </div>
                     <div class="form-group">
@@ -47,17 +51,45 @@
 
 
 @code {
-    private readonly HotelRoomDto HotelRoomDto = new HotelRoomDto();
-    private readonly string Title = "Create";
+    private HotelRoomDto HotelRoomDto = new HotelRoomDto();
+    private string Title = "Create";
+    [Parameter] public int? Id { get; set; }
 
-    private  async Task HandelHotelRoomUpsert()
+    private async Task HandelHotelRoomUpsert()
     {
-        var roomDetailByName = await HotelRoomService.IsRoomUniqueAsync(HotelRoomDto.Name);
-        if (roomDetailByName != null)
+        var isRoomUnique = await HotelRoomService.IsRoomUniqueAsync(HotelRoomDto.Name, HotelRoomDto.Id);
+        if (!isRoomUnique)
         {
+            await JsRuntime.ToastrError($"The room name: `{HotelRoomDto.Name}` already exists.");
             return;
         }
-        await HotelRoomService.CreateHotelRoomAsync(HotelRoomDto);
+        if (HotelRoomDto.Id != 0 && Title == "Update")
+        {
+            // Update Mode
+            await HotelRoomService.UpdateHotelRoomAsync(HotelRoomDto.Id, HotelRoomDto);
+            await JsRuntime.ToastrSuccess($"The `{HotelRoomDto.Name}` updated successfully.");
+        }
+        else
+        {
+            // Create Mode
+            await HotelRoomService.CreateHotelRoomAsync(HotelRoomDto);
+            await JsRuntime.ToastrSuccess($"The `{HotelRoomDto.Name}` created successfully.");
+        }
+
         NavigationManager.NavigateTo("hotel-room");
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            Title = "Update";
+            HotelRoomDto = await HotelRoomService.GetHotelRoomAsync(Id.Value);
+        }
+        else
+        {
+            HotelRoomDto = new HotelRoomDto();
+        }
     }
 }

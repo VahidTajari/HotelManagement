@@ -18,4 +18,8 @@
     </PackageReference>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\common.js" />
+  </ItemGroup>
 </Project>
