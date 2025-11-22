@@ -47,6 +47,7 @@ public class HotelRoomService : IHotelRoomService
     public IAsyncEnumerable<HotelRoomDto> GetAllHotelRoomsAsync()
     {
         return _dbContext.HotelRooms
+            .Include(x => x.HotelRoomImages)
                     .ProjectTo<HotelRoomDto>(_mapperConfiguration)
                     .AsAsyncEnumerable();
     }
@@ -54,8 +55,9 @@ public class HotelRoomService : IHotelRoomService
     public Task<HotelRoomDto> GetHotelRoomAsync(int roomId)
     {
         return _dbContext.HotelRooms
-                        .ProjectTo<HotelRoomDto>(_mapperConfiguration)
-                        .FirstOrDefaultAsync(x => x.Id == roomId);
+            .Include(x => x.HotelRoomImages)
+            .ProjectTo<HotelRoomDto>(_mapperConfiguration)
+            .FirstOrDefaultAsync(x => x.Id == roomId);
     }
     public async Task<HotelRoomDto> UpdateHotelRoomAsync(int roomId, HotelRoomDto hotelRoomDto)
     {

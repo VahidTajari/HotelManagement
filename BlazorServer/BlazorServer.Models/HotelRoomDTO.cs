@@ -1,4 +1,6 @@
-﻿namespace BlazorServer.Models;
+﻿using System.Collections.Generic;
+
+namespace BlazorServer.Models;
 
 public class HotelRoomDto
 {
@@ -12,8 +14,7 @@ public class HotelRoomDto
 
     [Range(1, 3000, ErrorMessage = "Regular rate must be between 1 and 3000")]
     public decimal RegularRate { get; set; }
-
     public string Details { get; set; }
-
     public string SqFt { get; set; }
+    public virtual ICollection<HotelRoomImageDTO> HotelRoomImages { get; set; } = new List<HotelRoomImageDTO>();
 }

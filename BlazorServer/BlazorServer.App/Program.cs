@@ -1,4 +1,5 @@
 ﻿using System;
+using BlazorServer.App.Services;
 using BlazorServer.DataAccess;
 using BlazorServer.Models.Mappings;
 using BlazorServer.Models.Services;
@@ -16,7 +17,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
 builder.Services.AddScoped<IHotelRoomService, HotelRoomService>();
-
+builder.Services.AddScoped<IHotelRoomImageService, HotelRoomImageService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

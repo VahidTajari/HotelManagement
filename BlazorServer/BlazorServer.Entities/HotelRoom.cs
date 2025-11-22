@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BlazorServer.Entities;
 
@@ -27,4 +28,5 @@ public class HotelRoom
     public string UpdatedBy { get; set; }
 
     public DateTime UpdatedDate { get; set; }
+    public virtual ICollection<HotelRoomImage> HotelRoomImages { get; set; }
 }

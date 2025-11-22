@@ -1,11 +1,19 @@
 ﻿@page "/hotel-room/create"
 @page "/hotel-room/edit/{Id:int}"
+@using System.IO
+@using BlazorServer.App.Services
 @using BlazorServer.App.Utils
+@using Microsoft.AspNetCore.Hosting
+
 
 
 @inject IHotelRoomService HotelRoomService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject IFileUploadService FileUploadService
+@inject IWebHostEnvironment WebHostEnvironment
+@inject IHotelRoomImageService HotelRoomImageService
+
 
 <h3>Hotel Room Upsert</h3>
 <div class="row mt-2 mb-5">
@@ -43,6 +51,25 @@
                         <button class="btn btn-primary" type="submit">@Title Room</button>
                         <NavLink href="hotel-room" class="btn btn-secondary">Back To Index</NavLink>
                     </div>
+                    <div class="form-group">
+                        <InputFile OnChange="HandleImageUpload" multiple></InputFile>
+                        <div class="row">
+                            @if (HotelRoomDto.HotelRoomImages.Count > 0)
+                            {
+                                var serial = 1;
+                                foreach (var roomImage in HotelRoomDto.HotelRoomImages)
+                                {
+                                    <div class="col-md-2 mt-3">
+                                        <div class="room-image" style="background: url('@roomImage.RoomImageUrl') 50% 50%; ">
+                                            <span class="room-image-title">@serial</span>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-block mt-4">Delete</button>
+                                    </div>
+                                    serial++;
+                                }
+                            }
+                        </div>
+                    </div>
                 </EditForm>
             </div>
         </div>
@@ -67,12 +94,14 @@
         {
             // Update Mode
             await HotelRoomService.UpdateHotelRoomAsync(HotelRoomDto.Id, HotelRoomDto);
+            await AddHotelRoomImageAsync(HotelRoomDto);
             await JsRuntime.ToastrSuccess($"The `{HotelRoomDto.Name}` updated successfully.");
         }
         else
         {
             // Create Mode
             await HotelRoomService.CreateHotelRoomAsync(HotelRoomDto);
+            await AddHotelRoomImageAsync(HotelRoomDto);
             await JsRuntime.ToastrSuccess($"The `{HotelRoomDto.Name}` created successfully.");
         }
 
@@ -90,6 +119,36 @@
         else
         {
             HotelRoomDto = new HotelRoomDto();
+        }
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs args)
+    {
+        var files = args.GetMultipleFiles(maximumFileCount: 5);
+        if (args.FileCount == 0 || files.Count == 0)
+        {
+            return;
+        }
+
+        var allowedExtensions = new List<string> { ".jpg", ".png", ".jpeg" };
+        if (!files.Any(file => allowedExtensions.Contains(Path.GetExtension(file.Name), StringComparer.OrdinalIgnoreCase)))
+        {
+            await JsRuntime.ToastrError("Please select .jpg/.jpeg/.png files only.");
+            return;
+        }
+
+        foreach (var file in files)
+        {
+            var uploadedImageUrl = await FileUploadService.UploadFileAsync(file, WebHostEnvironment.WebRootPath, "Uploads");
+            HotelRoomDto.HotelRoomImages.Add(new HotelRoomImageDTO { RoomImageUrl = uploadedImageUrl });
+        }
+    }
+    private async Task AddHotelRoomImageAsync(HotelRoomDto roomDto)
+    {
+        foreach (var imageDto in HotelRoomDto.HotelRoomImages.Where(x => x.RoomId == 0))
+        {
+            imageDto.RoomId = roomDto.Id;
+            await HotelRoomImageService.CreateHotelRoomImageAsync(imageDto);
         }
     }
 }
