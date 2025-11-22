@@ -249,5 +249,4 @@ ModelManifest.xml
 *.binlog
 /src/DntSite.Web/wwwroot/App_Data/
 *.pdf
-
-
+**/wwwroot/Uploads/
