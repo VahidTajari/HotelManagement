@@ -84,3 +84,25 @@ a, .btn-link {
     padding: 0px 6px;
     display: inline-block;
 }
+.spinner {
+    border: 16px solid silver !important;
+    border-top: 16px solid #337ab7 !important;
+    border-radius: 50% !important;
+    width: 80px !important;
+    height: 80px !important;
+    animation: spin 700ms linear infinite !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+    position: absolute !important;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

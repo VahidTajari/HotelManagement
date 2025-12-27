@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BlazorServer.Models.Services;
 
-public interface IHotelRoomService
+public interface IHotelRoomService : IDisposable
 {
     public Task<HotelRoomDto> CreateHotelRoomAsync(HotelRoomDto hotelRoomDto);
     public Task<int> DeleteHotelRoomAsync(int roomId);

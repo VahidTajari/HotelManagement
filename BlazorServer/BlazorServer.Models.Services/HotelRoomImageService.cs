@@ -9,7 +9,7 @@ using BlazorServer.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorServer.Models.Services;
-public sealed class HotelRoomImageService : IHotelRoomImageService
+public class HotelRoomImageService : IHotelRoomImageService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
@@ -49,5 +49,31 @@ public sealed class HotelRoomImageService : IHotelRoomImageService
             .Where(x => x.RoomId == roomId)
             .ProjectTo<HotelRoomImageDTO>(_mapperConfiguration)
             .ToListAsync();
+    }
+
+    private bool _isDisposed;
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_isDisposed)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    _dbContext.Dispose();
+                }
+            }
+            finally
+            {
+                _isDisposed = true;
+            }
+        }
     }
 }

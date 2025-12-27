@@ -1,0 +1,61 @@
+﻿@if (ShowModal)
+{
+    <div class="modal-backdrop show"></div>
+
+    <div class="modal fade show" id="exampleModal" tabindex="-1"
+         role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @Title
+                    </h5>
+                    <button @onclick="OnCancelClicked" type="button" class="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @ChildContent
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="OnCancelClicked" type="button" class="btn btn-secondary">@CancelButtonLabel</button>
+                    <button @onclick="OnConfirmClicked" type="button" class="btn btn-primary">@OkButtonLabel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@code {
+    private bool ShowModal;
+
+    [Parameter] public string Title { get; set; } = "Confirm";
+
+    [Parameter] public string CancelButtonLabel { get; set; } = "Cancel";
+
+    [Parameter] public string OkButtonLabel { get; set; } = "Ok";
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public EventCallback OnConfirm { get; set; }
+
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    public void Show() => ShowModal = true;
+
+    public void Hide() => ShowModal = false;
+
+    private async Task OnConfirmClicked()
+    {
+        ShowModal = false;
+        await OnConfirm.InvokeAsync();
+    }
+
+    private async Task OnCancelClicked()
+    {
+        ShowModal = false;
+        await OnCancel.InvokeAsync();
+    }
+}

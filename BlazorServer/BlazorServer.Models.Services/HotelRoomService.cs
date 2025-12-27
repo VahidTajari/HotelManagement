@@ -6,7 +6,6 @@ using AutoMapper.QueryableExtensions;
 using BlazorServer.DataAccess;
 using BlazorServer.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace BlazorServer.Models.Services;
 public class HotelRoomService : IHotelRoomService
@@ -96,6 +95,32 @@ public class HotelRoomService : IHotelRoomService
 
             var r = await _dbContext.HotelRooms.FirstOrDefaultAsync(x => x.Id == roomId && x.Name == name);
             return r is null;
+        }
+    }
+
+    private bool _isDisposed;
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_isDisposed)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    _dbContext.Dispose();
+                }
+            }
+            finally
+            {
+                _isDisposed = true;
+            }
         }
     }
 }
